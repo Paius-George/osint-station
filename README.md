@@ -1,15 +1,8 @@
 # OSINT // STATION
 
-> **Un singur semnal. Imaginea completă.**
->
-> Un terminal de intelligence care transformă un singur indiciu — un URL, o
+> Un dashboard de intelligence care transformă un singur indiciu — un URL, o
 > imagine, un număr de telefon, un username, un email sau un IP — într-un dosar
 > OSINT complet.
-
-![Python](https://img.shields.io/badge/Python-3.11%2B-1E45E6)
-![Flask](https://img.shields.io/badge/Flask-3.x-14191B)
-![Status](https://img.shields.io/badge/status-activ-0F7A54)
-![Licență](https://img.shields.io/badge/licen%C8%9B%C4%83-MIT-5C6A64)
 
 OSINT // STATION este o aplicație web self-hosted pentru open-source
 intelligence. Îi dai consolei un singur semnal, iar ea adună urmele împrăștiate
@@ -78,7 +71,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Apoi deschide **http://127.0.0.1:5001/** în browser. Oprești cu `Ctrl+C`.
+Apoi deschide http://127.0.0.1:5001/  în browser. Oprești cu `Ctrl+C`.
 
 > **Nu folosești `source venv/bin/activate`?** Rulează aplicația direct cu
 > interpretorul din venv: `./venv/bin/python app.py`. Un simplu `python app.py`
@@ -113,7 +106,7 @@ tematizate.
 
 ```
 app.py            # rutele Flask / orchestrarea cererilor
-web_tools.py      # analiză URL, SSL, DNS, RDAP, subdomenii, Wayback, credibilitate
+web_tools.py      # analiză URL, SSL, DNS, RDAP, subdomenii, Wayback
 ip_tools.py       # IP geo, RDAP, reverse DNS, reverse-IP, reputație DNSBL
 email_tools.py    # validare email, MX, SPF/DMARC, Gravatar
 user_tools.py     # enumerare username pe platforme
@@ -140,8 +133,6 @@ personale. Include:
   decompression-bomb;
 - `debug` dezactivat dacă nu setezi `FLASK_DEBUG=true`.
 
-Folosește-l responsabil, în limitele legii și ale termenilor fiecărei platforme.
-
 ---
 
 ## 🗺️ Posibile îmbunătățiri
@@ -153,14 +144,11 @@ Folosește-l responsabil, în limitele legii și ale termenilor fiecărei platfo
 
 ---
 
-## 📄 Licență
-
-Distribuit sub **Licența MIT** — adaugă un fișier `LICENSE` dacă intenționezi
-să-l distribui.
-
 ## 🙏 Mulțumiri
 
-Construit de **Paius**, pornind de la un proiect capstone original de tip OSINT
+Construit de **Paius George**, pornind de la un proiect capstone original de tip OSINT
 Dashboard. Folosește servicii publice gratuite, printre care ipinfo.io, crt.sh,
 HackerTarget, bootstrap-ul RDAP (rdap.org), Internet Archive, Gravatar și
 OpenStreetMap.
+
+----
