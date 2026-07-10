@@ -4,6 +4,13 @@
 > imagine, un număr de telefon, un username, un email sau un IP — într-un dosar
 > OSINT complet.
 
+![Python](https://img.shields.io/badge/Python-3.11%2B-1E45E6)
+![Flask](https://img.shields.io/badge/Flask-3.x-14191B)
+![Status](https://img.shields.io/badge/status-activ-0F7A54)
+![Licență](https://img.shields.io/badge/licen%C8%9B%C4%83-MIT-5C6A64)
+
+🖥️ **Demo (preview UI):** **[paius-george.github.io/osint-station](https://paius-george.github.io/osint-station/)** — vezi interfața reală (hero, cele 7 canale, temele light/dark) direct în browser, fără să instalezi nimic. E o **vitrină statică**: pentru tool-urile live, clonează și rulează local (vezi mai jos).
+
 OSINT // STATION este o aplicație web self-hosted pentru open-source
 intelligence. Îi dai consolei un singur semnal, iar ea adună urmele împrăștiate
 prin sursele publice — hosturi, certificate, DNS, metadate, coordonate,

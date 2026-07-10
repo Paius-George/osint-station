@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSINT // STATION — live UI preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="tools.css" />
+    <link rel="stylesheet" href="header.css" />
+    <style>
+      /* Demo-only touches (not part of the app) */
+      .demo-banner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px 14px;
+        padding: 11px 18px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        color: var(--on-accent);
+        background: var(--accent);
+        text-align: center;
+      }
+      .demo-banner a { color: var(--on-accent); font-weight: 600; }
+      .preview-wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+      .preview-eyebrow {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 10px 0 16px;
+      }
+      .fav {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border-radius: 6px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        font-family: var(--font-display); font-weight: 700; color: var(--muted);
+      }
+      .run-local {
+        max-width: 760px; margin: 26px auto 60px; padding: 0 24px;
+      }
+      .run-local h2 {
+        font-family: var(--font-display); font-weight: 700;
+        letter-spacing: -0.02em; color: var(--ink); font-size: 1.6rem;
+      }
+      .run-local pre {
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: 10px; padding: 16px 18px; overflow-x: auto;
+        font-family: var(--font-mono); font-size: 13px; color: var(--ink);
+        line-height: 1.7;
+      }
+      .run-local p { color: var(--muted); line-height: 1.6; }
+      .run-local a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <div class="demo-banner">
+      <span>◆ Live static preview — this is the real interface.</span>
+      <span>The forms don't run here;
+        <a href="#run">clone &amp; run locally</a> for the live tools, or see the
+        <a href="https://github.com/Paius-George/osint-station">source</a>.</span>
+    </div>
+
+    <header id="console-bar">
+      <a href="#top" id="title" aria-label="OSINT Station">
+        <span class="callsign-dot" aria-hidden="true"></span>
+        <span class="callsign">OSINT</span><span class="callsign-div">//</span><span class="callsign-2">STATION</span>
+      </a>
+      <button id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button>
+    </header>
+
+    <main class="station" id="top">
+      <section class="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-sweep" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <h1 class="hero-title">One signal in.<br />The <span class="hl">whole picture</span> out.</h1>
+          <p class="hero-sub">
+            Hand the console a web address, an image, a phone number, a username,
+            an email, or an IP — and it lays out the traces scattered across public
+            sources in one place.
+          </p>
+          <div class="hero-meta" aria-hidden="true">
+            <span>7 TOOLS</span><span class="sep"></span><span>FREE &amp; KEYLESS</span>
+            <span class="sep"></span><span>LIGHT / DARK</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="console" aria-label="Tools">
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">WEB</span><span class="channel-format">HTTP / HTTPS</span></div>
+          <h2 class="channel-title">URL Analysis</h2>
+          <p class="channel-copy">Host, certificate, DNS, ports, RDAP, subdomains, Wayback, links, emails — and a credibility score.</p>
+          <div class="channel-foot">
+            <label class="field-label">Target URL</label>
+            <div class="reticle"><input type="url" placeholder="https://example.com/" /></div>
+            <button type="button" class="run" onclick="toRun()">Run trace<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">IP</span><span class="channel-format">IPv4 · IPv6</span></div>
+          <h2 class="channel-title">IP Lookup</h2>
+          <p class="channel-copy">Geolocation, RDAP network, reverse DNS, neighbouring domains, and DNS blocklist reputation.</p>
+          <div class="channel-foot">
+            <label class="field-label">IP address</label>
+            <div class="reticle"><input type="text" placeholder="8.8.8.8" /></div>
+            <button type="button" class="run" onclick="toRun()">Profile IP<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">EMAIL</span><span class="channel-format">MX · GRAVATAR</span></div>
+          <h2 class="channel-title">Email OSINT</h2>
+          <p class="channel-copy">Mail servers, SPF/DMARC posture, a public Gravatar profile, and breach-check links.</p>
+          <div class="channel-foot">
+            <label class="field-label">Email address</label>
+            <div class="reticle"><input type="email" placeholder="name@example.com" /></div>
+            <button type="button" class="run" onclick="toRun()">Investigate<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">USER</span><span class="channel-format">SOCIAL · DEV</span></div>
+          <h2 class="channel-title">Username Search</h2>
+          <p class="channel-copy">Checks a handle across 26 platforms — GitHub, Reddit, YouTube, Instagram, and more — at once.</p>
+          <div class="channel-foot">
+            <label class="field-label">Username</label>
+            <div class="reticle"><input type="text" placeholder="johndoe" /></div>
+            <button type="button" class="run" onclick="toRun()">Find profiles<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">RECON</span><span class="channel-format">SEARCH OPS</span></div>
+          <h2 class="channel-title">Dork Builder</h2>
+          <p class="channel-copy">Turns a keyword or domain into categorised advanced-search queries with one-click links.</p>
+          <div class="channel-foot">
+            <label class="field-label">Keyword or domain</label>
+            <div class="reticle"><input type="text" placeholder="acme.com  or  acme corp" /></div>
+            <button type="button" class="run" onclick="toRun()">Build dorks<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+
+        <form class="channel" onsubmit="return false">
+          <div class="channel-head"><span class="channel-tag">TELECOM</span><span class="channel-format">E.164</span></div>
+          <h2 class="channel-title">Phone Lookup</h2>
+          <p class="channel-copy">Country, carrier, and line type — and a flag on the VoIP ranges scammers hide behind.</p>
+          <div class="channel-foot">
+            <label class="field-label">Phone number</label>
+            <div class="reticle"><input type="tel" placeholder="16055551234" /></div>
+            <button type="button" class="run" onclick="toRun()">Trace number<span class="run-arrow">→</span></button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- Results preview -->
+    <div class="preview-wrap">
+      <p class="preview-eyebrow">A URL report looks like this</p>
+    </div>
+    <div id="dash-board">
+      <div id="info-container">
+        <h1>acme-labs.io</h1>
+        <span class="fav">A</span>
+        <h2 style="margin:0;">Acme Labs</h2>
+        <h2>203.0.113.42</h2>
+      </div>
+
+      <div class="actions-bar">
+        <span class="actions-label">Export</span>
+        <button type="button" class="action-btn">&#8595; JSON</button>
+        <button type="button" class="action-btn">&#9113; Print / PDF</button>
+      </div>
+
+      <section class="cred-panel">
+        <div class="cred-score cred-band-high">
+          <div class="cred-num">82</div>
+          <div class="cred-band">High trust</div>
+        </div>
+        <div class="cred-checks">
+          <div class="cred-check cred-good"><span class="cred-dot"></span><span class="cred-clabel">TLS certificate</span><span class="cred-cdetail">Valid, issued by Let's Encrypt</span></div>
+          <div class="cred-check cred-good"><span class="cred-dot"></span><span class="cred-clabel">Domain age</span><span class="cred-cdetail">Registered 6 year(s) ago</span></div>
+          <div class="cred-check cred-good"><span class="cred-dot"></span><span class="cred-clabel">SPF record</span><span class="cred-cdetail">Present</span></div>
+          <div class="cred-check cred-warn"><span class="cred-dot"></span><span class="cred-clabel">DMARC record</span><span class="cred-cdetail">Not found</span></div>
+          <div class="cred-check cred-warn"><span class="cred-dot"></span><span class="cred-clabel">Security headers</span><span class="cred-cdetail">2 of 5 present</span></div>
+          <div class="cred-check cred-good"><span class="cred-dot"></span><span class="cred-clabel">Exposed services</span><span class="cred-cdetail">No sensitive ports open</span></div>
+        </div>
+      </section>
+
+      <div id="tools-container">
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>IP / Server Information:</b>
+            <hr /><div>IP: 203.0.113.42</div>
+            <hr /><div>City: Frankfurt</div>
+            <hr /><div>Organization: AS24940 Hetzner</div>
+            <hr /><div>Country: Germany</div>
+          </div>
+        </div>
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>DNS Records:</b>
+            <hr /><div>'A' (address) Record: <br />203.0.113.42</div>
+            <hr /><div>'MX' (mail exchange) Record: <br />aspmx.example.com</div>
+            <hr /><div>'NS' (nameserver) Record: <br />ns1.example.com<br />ns2.example.com</div>
+          </div>
+        </div>
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>Subdomains:</b>
+            <hr /><div>Count: 4 · Source: crt.sh</div>
+            <hr /><div>api.acme-labs.io<br />dev.acme-labs.io<br />staging.acme-labs.io<br />mail.acme-labs.io</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Run locally -->
+    <section class="run-local" id="run">
+      <h2>Run it locally</h2>
+      <p>The preview above is the real UI. To run the live tools, clone the repo:</p>
+      <pre>git clone https://github.com/Paius-George/osint-station.git
+cd osint-station
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py</pre>
+      <p>Then open <a href="http://127.0.0.1:5001/">http://127.0.0.1:5001/</a>. Full
+      details in the <a href="https://github.com/Paius-George/osint-station#readme">README</a>.</p>
+    </section>
+
+    <script>
+      (function () {
+        var root = document.documentElement;
+        root.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+        function label() {
+          var b = document.getElementById('theme-toggle');
+          if (b) b.textContent = root.getAttribute('data-theme') === 'dark' ? '☀ Light' : '☾ Dark';
+        }
+        label();
+        document.getElementById('theme-toggle').addEventListener('click', function () {
+          var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          root.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          label();
+        });
+      })();
+      function toRun() { document.getElementById('run').scrollIntoView({ behavior: 'smooth' }); }
+    </script>
+  </body>
+</html>

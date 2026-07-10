@@ -1,0 +1,131 @@
+:root {
+  --bg: #ECEEEA;
+  --surface: #FFFFFF;
+  --surface-2: #F3F5F1;
+  --line: #D3D9D3;
+  --line-soft: #E4E8E3;
+  --ink: #171C1D;
+  --muted: #5C6A64;
+  --accent: #1E45E6;
+  --accent-strong: #1636C4;
+  --accent-dim: #5E76CC;
+  --accent-soft: #E6EBFD;
+  --on-accent: #FFFFFF;
+  --ring: rgba(30, 69, 230, 0.16);
+  --grid: rgba(30, 69, 230, 0.09);
+  --bar-bg: rgba(255, 255, 255, 0.72);
+  --good: #0F7A54;
+  --warn: #B06E12;
+  --bad: #D23A2A;
+  --font-display: 'Bricolage Grotesque', 'Archivo', system-ui, sans-serif;
+  --font-body: 'Archivo', system-ui, sans-serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0A1417;
+  --surface: #0E1D21;
+  --surface-2: #12262B;
+  --line: #234441;
+  --line-soft: #16302E;
+  --ink: #ECE7DA;
+  --muted: #85A29D;
+  --accent: #FFB000;
+  --accent-strong: #FFC23A;
+  --accent-dim: #9A7017;
+  --accent-soft: rgba(255, 176, 0, 0.12);
+  --on-accent: #0A1417;
+  --ring: rgba(255, 176, 0, 0.28);
+  --grid: rgba(255, 176, 0, 0.06);
+  --bar-bg: rgba(14, 29, 33, 0.72);
+  --good: #63E6C9;
+  --warn: #E0A83A;
+  --bad: #F0603B;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-body);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Masthead ---- */
+#console-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 26px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bar-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+#title {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+#title .callsign-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+
+#title .callsign-div {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+#title .callsign-2 {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#theme-toggle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+#theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-soft);
+}
+
+@media (max-width: 560px) {
+  #console-bar { padding: 13px 16px; }
+  #title { font-size: 15px; }
+}
