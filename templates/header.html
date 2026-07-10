@@ -1,0 +1,28 @@
+<link rel="stylesheet" type="text/css" href="static/header.css" />
+<header id="console-bar">
+  <a href="{{ url_for('index') }}" id="title" aria-label="OSINT Station — home">
+    <span class="callsign-dot" aria-hidden="true"></span>
+    <span class="callsign">OSINT</span><span class="callsign-div">//</span><span class="callsign-2">STATION</span>
+  </a>
+  <button id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button>
+</header>
+<script>
+  (function () {
+    var root = document.documentElement;
+    root.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+    function label() {
+      var btn = document.getElementById('theme-toggle');
+      if (btn) btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀ Light' : '☾ Dark';
+    }
+    label();
+    var btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        label();
+      });
+    }
+  })();
+</script>

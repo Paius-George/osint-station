@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email OSINT — {{ data.email }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/tools.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div id="dash-board">
+      <div id="info-container">
+        <h1>{{ data.email }}</h1>
+        <span class="target-kind">EMAIL</span>
+        {% if data.valid %}<span class="dork-count">{{ data.domain }}</span>{% endif %}
+      </div>
+
+      {% if not data.valid %}
+      <p class="dork-note">{{ data.error }}</p>
+      {% else %}
+      <section class="cred-panel">
+        {% if data.gravatar_img %}
+        <div class="email-avatar-wrap">
+          <img class="email-avatar" src="{{ data.gravatar_img }}" alt="Gravatar avatar" />
+          <span class="email-avatar-cap">Gravatar</span>
+        </div>
+        {% else %}
+        <div class="email-avatar-wrap email-avatar-none"><span>No public<br />Gravatar</span></div>
+        {% endif %}
+        <div class="cred-checks">
+          <div class="cred-check cred-{{ 'good' if data.has_mx else 'bad' }}">
+            <span class="cred-dot" aria-hidden="true"></span>
+            <span class="cred-clabel">Mail servers</span>
+            <span class="cred-cdetail">{{ data.mx|length }} MX record{{ '' if data.mx|length == 1 else 's' }}</span>
+          </div>
+          <div class="cred-check cred-{{ 'good' if data.spf else 'warn' }}">
+            <span class="cred-dot" aria-hidden="true"></span>
+            <span class="cred-clabel">SPF</span>
+            <span class="cred-cdetail">{{ 'Present' if data.spf else 'Not found' }}</span>
+          </div>
+          <div class="cred-check cred-{{ 'good' if data.dmarc else 'warn' }}">
+            <span class="cred-dot" aria-hidden="true"></span>
+            <span class="cred-clabel">DMARC</span>
+            <span class="cred-cdetail">{{ 'Present' if data.dmarc else 'Not found' }}</span>
+          </div>
+          <div class="cred-check cred-{{ 'good' if data.gravatar_exists else 'na' }}">
+            <span class="cred-dot" aria-hidden="true"></span>
+            <span class="cred-clabel">Gravatar</span>
+            <span class="cred-cdetail">{{ 'Public profile' if data.gravatar_exists else 'None found' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="tools-container">
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>Mail servers (MX)</b>
+            <hr />
+            {% if data.mx %}{% for m in data.mx %}<div>{{ m }}</div>{% endfor %}
+            {% else %}<div>No MX records found for this domain.</div>{% endif %}
+          </div>
+        </div>
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>External checks</b>
+            <hr />
+            {% for name, url in data.links.items() %}
+            <div><a class="info-tag" href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ name }}&nbsp;&#8599;</a></div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

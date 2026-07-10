@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Username Search — {{ data.username }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/tools.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div id="dash-board">
+      <div id="info-container">
+        <h1>{{ data.username }}</h1>
+        <span class="target-kind">USERNAME</span>
+        <span class="dork-count">{{ data.found_count }} / {{ data.total }} FOUND</span>
+      </div>
+
+      {% if data.error %}
+      <p class="dork-note">{{ data.error }}</p>
+      {% else %}
+      <p class="dork-note">
+        Best-effort matches from HTTP responses. Some sites block bots or reuse
+        pages, so treat each hit as a lead and confirm it manually.
+      </p>
+      <div class="user-grid">
+        {% for r in data.results %}
+        <div class="user-row user-{{ r.status }}">
+          <span class="user-dot" aria-hidden="true"></span>
+          <span class="user-name">{{ r.name }}</span>
+          <span class="user-status">{{ r.status }}</span>
+          {% if r.caution %}<span class="user-caution" title="Aggressively blocks bots — this result is unreliable">&#9888;</span>{% endif %}
+          {% if r.status == 'found' %}
+          <a class="user-open" href="{{ r.url }}" target="_blank" rel="noopener noreferrer">Open&nbsp;&#8599;</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

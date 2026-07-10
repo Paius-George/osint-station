@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dork Builder — {{ dorks.term }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/tools.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div id="dash-board">
+      <div id="info-container">
+        <h1>{{ dorks.term }}</h1>
+        <span class="target-kind">{{ 'DOMAIN' if dorks.is_domain else 'KEYWORD' }}</span>
+        <span class="dork-count">{{ dorks.total }} DORKS</span>
+      </div>
+
+      <p class="dork-note">
+        Each query opens a live search in a new tab. Nothing is run automatically —
+        review the operators, then click through to Google, DuckDuckGo, or Bing.
+      </p>
+
+      <div class="dork-grid">
+        {% for cat in dorks.categories %}
+        <section class="dork-cat">
+          <h2 class="dork-cat-name">{{ cat.name }}</h2>
+          {% for d in cat.dorks %}
+          <div class="dork">
+            <div class="dork-label">{{ d.label }}</div>
+            <code class="dork-q">{{ d.query }}</code>
+            <div class="dork-actions">
+              <a class="dork-run" href="{{ d.urls.google }}" target="_blank" rel="noopener noreferrer">Google&nbsp;&#8599;</a>
+              <a class="dork-alt" href="{{ d.urls.ddg }}" target="_blank" rel="noopener noreferrer">DDG</a>
+              <a class="dork-alt" href="{{ d.urls.bing }}" target="_blank" rel="noopener noreferrer">Bing</a>
+              <button type="button" class="dork-copy">COPY</button>
+            </div>
+          </div>
+          {% endfor %}
+        </section>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll(".dork-copy").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var q = btn.closest(".dork").querySelector(".dork-q").textContent;
+          navigator.clipboard.writeText(q).then(function () {
+            btn.classList.add("copied");
+            btn.textContent = "COPIED";
+            setTimeout(function () {
+              btn.classList.remove("copied");
+              btn.textContent = "COPY";
+            }, 1200);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

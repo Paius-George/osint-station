@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSINT Station — Field Intelligence Terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="static/styles.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <main class="station">
+      <section class="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-sweep" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <h1 class="hero-title">One signal in.<br />The <span class="hl">whole picture</span> out.</h1>
+          <p class="hero-sub">
+            Hand the console a web address, an image, or a phone number. It pulls the
+            traces scattered across public sources — hosts, metadata, coordinates — and
+            lays them out in one place.
+          </p>
+          <div class="hero-meta" aria-hidden="true">
+            <span>EXIF · GPS</span>
+            <span class="sep"></span>
+            <span>CARRIER TRACE</span>
+            <span class="sep"></span>
+            <span>SEARCH DORKS</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="console" aria-label="Acquisition channels">
+        <!-- Channel: WEB -->
+        <form
+          class="channel"
+          id="webForm"
+          method="POST"
+          action="/web_tool"
+          autocomplete="off"
+          onsubmit="showLoadingScreen(); startQuoteCycle();"
+        >
+          <div class="channel-head">
+            <span class="channel-tag">WEB</span>
+            <span class="channel-format">HTTP / HTTPS</span>
+          </div>
+          <h2 class="channel-title">URL Analysis</h2>
+          <p class="channel-copy">
+            Resolve a domain to its host, certificate, DNS, and open ports — plus the
+            emails, numbers, and pages it links out to.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="web_input">Target URL</label>
+            <div class="reticle">
+              <input
+                type="url"
+                name="web_input"
+                id="web_input"
+                placeholder="https://example.com/"
+                pattern="https?:\/\/(www\.)?.+\..+"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Run trace<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: IMAGE -->
+        <form class="channel" action="/upload" method="post" enctype="multipart/form-data" onsubmit="showLoadingScreen(); startQuoteCycle();">
+          <div class="channel-head">
+            <span class="channel-tag">IMAGE</span>
+            <span class="channel-format">JPEG · PNG · TIFF</span>
+          </div>
+          <h2 class="channel-title">EXIF Viewer</h2>
+          <p class="channel-copy">
+            Read the metadata baked into a photo: camera and settings, timestamps, and
+            GPS coordinates when the shot was geotagged.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="file">Upload image</label>
+            <div class="reticle">
+              <input
+                class="file-field"
+                type="file"
+                name="fileToUpload"
+                onchange="checkFileSize(this)"
+                accept=".jpg,.jpeg,.png,.gif,.tiff"
+                id="file"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Read metadata<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: TELECOM -->
+        <form class="channel" method="POST" action="/pid_tool" autocomplete="off" onsubmit="showLoadingScreen(); startQuoteCycle();">
+          <div class="channel-head">
+            <span class="channel-tag">TELECOM</span>
+            <span class="channel-format">E.164</span>
+          </div>
+          <h2 class="channel-title">Phone Lookup</h2>
+          <p class="channel-copy">
+            Check a number's country, carrier, and line type — and flag the VoIP ranges
+            that scammers tend to hide behind.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="phone_input">Phone number</label>
+            <div class="reticle">
+              <input
+                type="tel"
+                name="phone_input"
+                id="phone_input"
+                placeholder="16055551234"
+                title="Enter digits only, including country code"
+                maxlength="15"
+                pattern="[0-9]*"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Trace number<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: RECON -->
+        <form class="channel" method="POST" action="/dork_tool" autocomplete="off">
+          <div class="channel-head">
+            <span class="channel-tag">RECON</span>
+            <span class="channel-format">SEARCH OPS</span>
+          </div>
+          <h2 class="channel-title">Dork Builder</h2>
+          <p class="channel-copy">
+            Turn a keyword or domain into a battery of advanced search queries — files,
+            logins, exposed directories, and footprint across the web.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="dork_input">Keyword or domain</label>
+            <div class="reticle">
+              <input
+                type="text"
+                name="dork_input"
+                id="dork_input"
+                placeholder="acme.com  or  acme corp"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Build dorks<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: USER -->
+        <form class="channel" method="POST" action="/user_tool" autocomplete="off" onsubmit="showLoadingScreen(); startQuoteCycle();">
+          <div class="channel-head">
+            <span class="channel-tag">USER</span>
+            <span class="channel-format">SOCIAL · DEV</span>
+          </div>
+          <h2 class="channel-title">Username Search</h2>
+          <p class="channel-copy">
+            Take a handle and check where it exists — GitHub, Reddit, Steam, and a
+            dozen more social and developer platforms at once.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="user_input">Username</label>
+            <div class="reticle">
+              <input
+                type="text"
+                name="user_input"
+                id="user_input"
+                placeholder="johndoe"
+                pattern="[A-Za-z0-9._-]+"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Find profiles<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: EMAIL -->
+        <form class="channel" method="POST" action="/email_tool" autocomplete="off" onsubmit="showLoadingScreen(); startQuoteCycle();">
+          <div class="channel-head">
+            <span class="channel-tag">EMAIL</span>
+            <span class="channel-format">MX · GRAVATAR</span>
+          </div>
+          <h2 class="channel-title">Email OSINT</h2>
+          <p class="channel-copy">
+            Check an address for its mail servers, SPF/DMARC posture, a public
+            Gravatar profile, and where to hunt for breaches.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="email_input">Email address</label>
+            <div class="reticle">
+              <input
+                type="email"
+                name="email_input"
+                id="email_input"
+                placeholder="name@example.com"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Investigate<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <!-- Channel: IP -->
+        <form class="channel" method="POST" action="/ip_tool" autocomplete="off" onsubmit="showLoadingScreen(); startQuoteCycle();">
+          <div class="channel-head">
+            <span class="channel-tag">IP</span>
+            <span class="channel-format">IPv4 · IPv6</span>
+          </div>
+          <h2 class="channel-title">IP Lookup</h2>
+          <p class="channel-copy">
+            Profile an address: geolocation, owning network (RDAP), reverse DNS,
+            neighbouring domains, and public blocklist reputation.
+          </p>
+          <div class="channel-foot">
+            <label class="field-label" for="ip_input">IP address</label>
+            <div class="reticle">
+              <input
+                type="text"
+                name="ip_input"
+                id="ip_input"
+                placeholder="8.8.8.8"
+                required
+              />
+            </div>
+            <button type="submit" class="run">Profile IP<span class="run-arrow" aria-hidden="true">→</span></button>
+          </div>
+        </form>
+      </section>
+
+      <footer class="colophon">
+        <span class="colophon-mark">OSINT//STATION</span>
+        <span class="colophon-body">Built by Paius</span>
+      </footer>
+    </main>
+
+    <div class="loading-screen" id="loadingScreen" role="status" aria-live="polite">
+      <div class="scanner" aria-hidden="true"><div class="scanner-bar"></div></div>
+      <div id="quoteContainer" class="quote-container"></div>
+    </div>
+
+    <script>
+      function showLoadingScreen() {
+        document.getElementById("loadingScreen").style.display = "flex";
+      }
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+          document.getElementById("loadingScreen").style.display = "none";
+        }
+      });
+      const quotes = ["Acquiring signal", "Resolving sources", "Compiling trace"];
+
+      function startQuoteCycle() {
+        const quoteContainer = document.getElementById("quoteContainer");
+        let index = 0;
+
+        function displayNextQuote() {
+          const quote = quotes[index];
+          quoteContainer.innerHTML = `<div class="quote">${quote}<span class="caret"></span></div>`;
+          index = (index + 1) % quotes.length;
+        }
+
+        displayNextQuote();
+
+        const quoteInterval = setInterval(displayNextQuote, 1400);
+
+        setTimeout(() => {
+          clearInterval(quoteInterval);
+        }, 30000);
+      }
+      function checkFileSize(input) {
+        const maxFileSizeMB = 20;
+
+        if (input.files.length > 0) {
+          const fileSize = input.files[0].size;
+          const fileSizeMB = fileSize / (1024 * 1024);
+
+          if (fileSizeMB > maxFileSizeMB) {
+            alert("File size exceeds the maximum allowed size of 20 MB.");
+            input.value = "";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

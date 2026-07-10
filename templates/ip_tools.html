@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IP Lookup — {{ data.ip }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="static/tools.css" />
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div id="dash-board">
+      <div id="info-container">
+        <h1>{{ data.ip }}</h1>
+        <span class="target-kind">IP</span>
+        {% if data.valid %}
+        <span class="dork-count">{{ 'CLEAN' if data.listed_count == 0 else (data.listed_count ~ ' LISTED') }}</span>
+        {% endif %}
+      </div>
+
+      {% if not data.valid %}
+      <p class="dork-note">{{ data.error }}</p>
+      {% else %}
+      <section class="cred-panel">
+        <div class="cred-score cred-band-{{ 'high' if data.listed_count == 0 else 'low' }}">
+          <div class="cred-num">{{ data.listed_count }}</div>
+          <div class="cred-band">On blocklists</div>
+        </div>
+        <div class="cred-checks">
+          {% for b in data.dnsbl %}
+          <div class="cred-check cred-{{ 'bad' if b.listed else ('na' if b.listed is none else 'good') }}">
+            <span class="cred-dot" aria-hidden="true"></span>
+            <span class="cred-clabel">{{ b.name }}</span>
+            <span class="cred-cdetail">{{ 'Listed' if b.listed else ('Unknown' if b.listed is none else 'Not listed') }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <div id="tools-container">
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>Geolocation</b>
+            <hr />
+            {% if data.geo and not data.geo.get('Error') %}
+              {% for k in ['city', 'region', 'country_name', 'org', 'postal', 'timezone'] %}
+                {% if data.geo.get(k) %}<div>{{ k.replace('_', ' ')|title }}: {{ data.geo[k] }}</div>{% endif %}
+              {% endfor %}
+            {% else %}<div>No geolocation available (ipinfo key not set or lookup failed).</div>{% endif %}
+          </div>
+          <div class="tool-info">
+            <b>Reverse DNS (PTR)</b>
+            <hr />
+            <div>{{ data.ptr or 'No PTR record found.' }}</div>
+          </div>
+        </div>
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>Network (RDAP)</b>
+            <hr />
+            {% if data.rdap and not data.rdap.get('error') %}
+              {% for k, v in data.rdap.items() %}<div>{{ k }}: {{ v }}</div>{% endfor %}
+            {% else %}<div>{{ data.rdap.get('error', 'No allocation data.') }}</div>{% endif %}
+          </div>
+        </div>
+        <div id="tool-column">
+          <div class="tool-info">
+            <b>Other domains on this IP</b>
+            <hr />
+            {% if data.reverse_domains %}
+              {% for d in data.reverse_domains %}
+              <div><a class="info-tag" href="/web_tool?web_input=https://{{ d }}/">{{ d }}</a></div>
+              {% endfor %}
+            {% else %}<div>None found (or reverse-IP source unavailable).</div>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment / secrets — never commit these
+.env
+*.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / tooling
+.vscode/
+.idea/
+.claude/
+
+# Project-local backups (not part of the app)
+_design_station_backup/
