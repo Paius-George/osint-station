@@ -21,7 +21,6 @@ Thumbs.db
 # Editor / tooling
 .vscode/
 .idea/
-.claude/
 
 # Project-local backups (not part of the app)
 _design_station_backup/
