@@ -57,7 +57,7 @@ folosit doar pentru feature-ul de screenshot al analizei URL.
 
 ```bash
 # 1. Clonează
-git clone https://github.com/<utilizatorul-tău>/osint-station.git
+git clone https://github.com/Paius-George/osint-station.git
 cd osint-station
 
 # 2. Creează un mediu virtual
